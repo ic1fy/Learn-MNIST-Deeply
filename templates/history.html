@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>识别历史记录</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center justify-start">
+
+  <div class="w-full max-w-4xl mt-8">
+    <h1 class="text-3xl font-bold text-center mb-6">识别历史记录</h1>
+    <a href="/" class="mb-4 inline-block text-blue-600 hover:underline">← 返回主页</a>
+
+    <table class="w-full table-auto border border-collapse">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border px-4 py-2">图片文件名</th>
+          <th class="border px-4 py-2">模型名</th>
+          <th class="border px-4 py-2">预测结果</th>
+          <th class="border px-4 py-2">时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in records %}
+        <tr class="text-center">
+          <td class="border px-4 py-2">{{ row[0] }}</td>
+          <td class="border px-4 py-2">{{ row[1] }}</td>
+          <td class="border px-4 py-2 font-bold text-blue-600">{{ row[2] }}</td>
+          <td class="border px-4 py-2">{{ row[3] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

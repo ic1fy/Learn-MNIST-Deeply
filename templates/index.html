@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digit Recognizer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center justify-start transition-colors duration-300">
+
+  <!-- 顶部操作栏：语言切换按钮 -->
+  <div class="w-full max-w-6xl flex justify-end p-4 space-x-2">
+    <a href="/history" class="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition text-center">
+      查看历史记录
+    </a>
+    <button id="langToggle" class="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition">
+      中文
+    </button>
+  </div>
+
+
+  <!-- 页面主标题 -->
+  <div class="text-4xl font-extrabold text-blue-600 mt-4 mb-8 text-center transition-colors duration-300" id="brand-name">
+    Digit Recognizer
+  </div>
+
+  <!-- 主内容卡片 -->
+  <main class="w-full max-w-6xl bg-white text-black rounded-2xl shadow-2xl p-12 transition-colors duration-300">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+
+      <!-- 模型选择 + 上传 -->
+      <section>
+        <label for="model-select" class="block text-lg font-semibold mb-2" id="model-label">模型：</label>
+        <select id="model-select" class="w-full rounded-md border border-gray-300 bg-gray-50 text-gray-800 p-3 mb-6">
+          {% for ckpt in checkpoints %}
+            <option value="{{ ckpt }}">{{ ckpt }}</option>
+          {% endfor %}
+        </select>
+
+        <!-- 拖拽上传区域 -->
+        <label id="drop-zone" class="flex flex-col items-center justify-center w-full h-56 px-4 py-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer transition hover:border-blue-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <p class="text-center text-base text-gray-600">
+            <span data-i18n-key="drop_or">拖拽图片至此，或</span>
+            <span class="text-blue-600 underline" data-i18n-key="browse">点击上传</span>
+          </p>
+          <input id="file-input" type="file" accept="image/*" class="hidden" />
+        </label>
+      </section>
+
+      <!-- 图片预览和结果展示 -->
+      <section class="flex flex-col items-center justify-between text-center px-4 h-full">
+        <div id="preview-container" class="mb-4 w-full flex justify-center">
+          <img id="preview-image" src="" alt="预览图" class="w-full max-w-[250px] h-auto hidden object-contain rounded-md shadow-lg" />
+        </div>
+        <div id="result-display" class="text-2xl font-semibold mt-auto pb-2">
+          <span id="result-label"></span>
+          <span id="result-value" class="text-5xl font-extrabold text-blue-600 ml-2"></span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
