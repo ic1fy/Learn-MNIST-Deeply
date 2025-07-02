@@ -38,6 +38,8 @@ def train_and_eval(batch_size, lr, optimizer_name, activation_name, loss_name):
     optimizer = get_optimizer(optimizer_name, model.parameters(), lr)
     criterion = get_loss_fn(loss_name)
 
+    log_rows = []  # 日志数据列表
+
     for epoch in range(10):
         model.train()
         total_loss = 0
@@ -57,8 +59,8 @@ def train_and_eval(batch_size, lr, optimizer_name, activation_name, loss_name):
             y_true.extend(labels.detach().cpu().numpy())
 
         avg_train_loss = total_loss / len(train_loader)
-        acc, precision, recall, f1 = compute_metrics(y_true, y_pred)
-        print_metrics_inline(f"[Train Epoch {epoch+1}]", avg_train_loss, acc, precision, recall, f1)
+        acc_train, prec_train, rec_train, f1_train = compute_metrics(y_true, y_pred)
+        print_metrics_inline(f"[Train Epoch {epoch+1}]", avg_train_loss, acc_train, prec_train, rec_train, f1_train)
 
         # 测试阶段
         model.eval()
@@ -76,15 +78,39 @@ def train_and_eval(batch_size, lr, optimizer_name, activation_name, loss_name):
                 y_true.extend(labels.detach().cpu().numpy())
 
         avg_test_loss = test_loss / len(test_loader)
-        acc, precision, recall, f1 = compute_metrics(y_true, y_pred)
-        print_metrics_inline(f"[Test  Epoch {epoch+1}]", avg_test_loss, acc, precision, recall, f1)
+        acc_test, prec_test, rec_test, f1_test = compute_metrics(y_true, y_pred)
+        print_metrics_inline(f"[Test  Epoch {epoch+1}]", avg_test_loss, acc_test, prec_test, rec_test, f1_test)
 
+        # 添加日志记录
+        log_rows.append({
+            'epoch': epoch + 1,
+            'train_loss': avg_train_loss,
+            'train_acc': acc_train,
+            'train_precision': prec_train,
+            'train_recall': rec_train,
+            'train_f1': f1_train,
+            'test_loss': avg_test_loss,
+            'test_acc': acc_test,
+            'test_precision': prec_test,
+            'test_recall': rec_test,
+            'test_f1': f1_test
+        })
+
+    filename = f"bs{batch_size}_lr{lr}_{optimizer_name}_{activation_name}_{loss_name}.csv"
+    save_dir = "Param_Comparison/hyper-parameter_logs"
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, filename)
+    pd.DataFrame(log_rows).to_csv(save_path, index=False)
+    print(f"\n📁 训练日志已保存至：{save_path}")
+
+    # 返回最终测试指标
     return {
-        'accuracy': acc,
-        'precision': precision,
-        'recall': recall,
-        'f1': f1
+        'accuracy': acc_test,
+        'precision': prec_test,
+        'recall': rec_test,
+        'f1': f1_test
     }
+
 
 def run_experiments():
     results = []
